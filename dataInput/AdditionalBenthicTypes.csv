@@ -1,0 +1,51 @@
+Species,BenthicType
+Acropora juvenile,HardCoral
+Acropora other,HardCoral
+Acropora recruit,HardCoral
+Acropora sp,HardCoral
+Acropora sp.,HardCoral
+Acropora sp. ,HardCoral
+anemone,Other
+Cladiella,Other
+clam,Other
+coral,HardCoral
+Dead coral,NonLiving
+Fungia repanda,HardCoral
+Fungiidae,HardCoral
+Goniopora,HardCoral
+Goniopora sp,HardCoral
+Goniopora spp,HardCoral
+Heliopora,Other
+Heliopora coerulea,Other
+Heliopora spp,Other
+Isis hippurus,Other
+Leptastrea sp.?,HardCoral
+Lobophyllia pachysepta,SoftCoral
+Lobophytum,SoftCoral
+Lobophytum spp,SoftCoral
+Millepora,Other
+Millepora spp,Other
+Monitpora crassituberculata,HardCoral
+Montipora,HardCoral
+Montipora sp,HardCoral
+Montipora sp.,HardCoral
+Mussidae,HardCoral
+other hard coral,HardCoral
+Other soft coral,SoftCoral
+other_sessile,Other
+Palythoa,Other
+Pocillopora others,HardCoral
+Pocillopora sp,HardCoral
+Psammocora digitata ,HardCoral
+Psammocora haimeana,HardCoral
+Psammocora sp,HardCoral
+Psammocora superficialis,HardCoral
+Rubble large,NonLiving
+Rubble small,NonLiving
+Sarcophyton sp.,SoftCoral
+Sarcophytum spp,SoftCoral
+Sinularia sp.,SoftCoral
+Sinularia spp,SoftCoral
+soft,SoftCoral
+Xenia sp.,SoftCoral
+zooanthid,Other

@@ -1,33 +1,44 @@
 # History files
 .Rhistory
 .Rapp.history
-
 # Session Data files
 .RData
-
 # Example code in package build process
 *-Ex.R
-
 # Output files from R CMD build
 /*.tar.gz
-
 # Output files from R CMD check
 /*.Rcheck/
-
 # RStudio files
 .Rproj.user/
-
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
-
 # OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
 .httr-oauth
-
 # knitr and R markdown default cache directories
 /*_cache/
 /cache/
-
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+.Rproj.user
+1.Progress.rmd
+3.CoralShapeExploration.html
+3.CoralShapeExploration.rmd
+ConvexityWA_Data_ForLuisa.csv
+ConvexityWA_RModels_ForLuisa.rds
+ExtendedSummary.Rmd
+ExtendedSummary.docx
+FuncEco SI Outline - Kyle Zawada.docx
+MorphoStrategiesOfCoralsAnthropocene_PreSubmissionSummary_180402_MD_JSM.docx
+MorphoStrategiesOfCoralsAnthropocene_PreSubmissionSummary_180423_MD_JSM.docx
+MorphoStrategiesOfCoralsAnthropocene_PreSubmissionSummary_180518.docx
+MorphologyByGrowthForm_ForDama.csv
+PCACode_ForLuisa.r
+Rplot.pdf
+Test.pdf
+Vviv_Four-month report_090317_MD - Copy.docx
+Vviv_Four-month report_090317_MD.docx
+Zawada_MorphoStrategiesOfCoralsAnthropocene_SuggestedReveiwers_180522.docx
+write up
