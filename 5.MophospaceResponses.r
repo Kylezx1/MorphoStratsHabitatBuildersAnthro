@@ -23,13 +23,12 @@ source("Functions.r")
 
 LITDat <- readRDS("3.PredictingShapeVariables/PredictiveModels_LITShapeData.rds")
 BioGeoDat <-  read.csv("2.DataSetup/BioGeoDat_PlusLIBearing.csv")
-MorphoDat <- read.csv("2.DataSetup/MorphologyData_HighQualityWhole5GFs.csv")
 
 #PCA Analysis ====
 
 #.....create LIT PCA Dataframe ====
 
-#Only uses sites with conisitent data from 2011 to 2017
+#Only uses sites with consistent data from 2011 to 2017
 
 LITPCADatList <- lapply(1:nrow(LITDat), function(x) {
   LITDat$LITData_PlusShapeVars[[x]] %>%
@@ -44,22 +43,8 @@ LITPCADat <- bind_cols(LITPCADatList) %>%
   filter(site %in% c("North Reef", "Lizard Head", "Horseshoe", "Lagoon2", "Trimodal", "Lagoon 1")) %>%
   filter(campaign %in% c("2011","2014","2015","2016","2017"))
 
-#.....transform morphology data ====
-
-MorphoDat_OrigScale <- MorphoDat
-
-MorphoDat <- MorphoDat %>% mutate(Sphericity = logit(Sphericity),
-                                  FractalDimension = logit(FractalDimension),
-                                  ColonyVol = log10(ColonyVol),
-                                  SAVol = log10(SAVol),
-                                  ColonySA2ndMomentVertScaled = log10(ColonySA2ndMomentVertScaled),
-                                  Convexity = logit(Convexity))
-
-
 #.....PCA Set up ====
 
-PCAVars <- c("Sphericity", "FractalDimension", "SAVol")
-PCAVarsLabels <- c("S", "FD", "SA:V", "Vol")
 
 PCAVars <- c("Convexity", "FractalDimension", "ColonySA2ndMomentVertScaled")
 PCAVarsLabels <- c("Volume\ncompactness", "Surface\ncomplexity", "Top-heaviness\nsurface area")
@@ -154,13 +139,11 @@ plotPCA <- function(GeneratedPCA, GroupingVar = F, VarLabels = T,
 
 #.....Generate PCA ====
 
-MorphoPCA <- generatePCA(MorphoDat, PCAVars, PCALabel = "PossibleSpace", VarLabels = PCAVarsLabels)
 LITPCA <- generatePCA(LITPCADat, PCAVars, PCALabel = "PossibleSpace", VarLabels = PCAVarsLabels)
 
 
 #.....All sites PCA ====
 
-AllSitesPCAData <- MorphoPCA
 AllSitesPCAData <- LITPCA
 
 AllSitesPCAData <- LITPCADat %>%
@@ -225,28 +208,25 @@ fviz_screeplot(LITPCA$PCA)
 
 library(vegan)
 
+#Select 2011 and 2017 data for simplified comparisons pre and post disturbances
+
 DispersionDat <- cbind(LITPCA$Data, LITPCADat$campaign) %>%
   dplyr::rename(campaign = 'LITPCADat$campaign') %>%
   filter(campaign %in% c("2011","2017"))
 
+#Remove campaign and calculate distances
+
 AllSitesDist <- DispersionDat %>% dplyr::select(-campaign) %>% dist()
+
+#Beta dispersion analysis: is the variation in morpospace different between years?
 
 AllSites_Dispersion <- betadisper(AllSitesDist, DispersionDat$campaign)
 anova(AllSites_Dispersion)
 summary(AllSites_Dispersion)
 boxplot(AllSites_Dispersion)
 
+#Permanova analysis: are the mean positions of the morphospaces different?
+
 AllSites_PERMANOVA <- adonis(AllSitesDist ~ DispersionDat$campaign)
-anova(AllSites_PERMANOVA)
 AllSites_PERMANOVA
-
-
-summary(AllSites_Dispersion)
-TukeyHSD(AllSites_Dispersion)
-
-summary(AllSites_Similarity)
-TukeyHSD(AllSites_Similarity)
-
-summary(AllSites_PERMANOVA)
-TukeyHSD(AllSites_PERMANOVA)
 

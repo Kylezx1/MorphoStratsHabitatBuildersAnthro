@@ -128,6 +128,9 @@ MorphoDat <- MorphoDat %>%
 
 saveRDS(MorphoDat, "3.PredictingShapeVariables/ModelObject.rds")
 
+MorphoDat <- readRDS("3.PredictingShapeVariables/ModelObject.rds")
+
+
 #.....Model tables ====
 
 Vars <- MorphoDat$ShapeVariable
@@ -165,7 +168,13 @@ lapply(1:length(CoefsNew), function(x) {
   CoefsNew[[x]]$term <<- gsub(pattern = "PlanarArea", replacement = "PlanarArea_cm2", CoefsNew[[x]]$term )
 })
 
+
+
 CoefsAll <- full_join(CoefsNew[[1]], CoefsNew[[4]], by = "term") %>% full_join(., CoefsNew[[6]], by = "term")
+
+CoefsAll <- CoefsNew %>% reduce(full_join, by = "term")
+
+write_csv(CoefsAll, path = "3.PredictingShapeVariables/ModelCoefficients.csv")
 
 #.....Model stats ====
 
@@ -236,6 +245,8 @@ lapply(1:length(ShapeVars), function(x) {
 })
 
 #.....Export work ====
+
+#RDS File keeps all of the data, models, outputs, etc.
 
 saveRDS(MorphoDat, "3.PredictingShapeVariables/PredictiveModels_LITShapeData.rds")
 

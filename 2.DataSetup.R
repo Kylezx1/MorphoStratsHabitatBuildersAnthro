@@ -14,10 +14,12 @@ source("Functions.r")
 
 #.....Data ====
 
-LITDat <- read.csv("dataInput/lit_merged_20180412.csv")
-CTDB <- read.csv("dataInput/ctdb_1.1.1.1_NomenclatureUpdate_data.csv")
-MorphoDat <- read.csv("dataInput/Morphology_WholeAndMedtoHighQualityMeshes_Ready.csv")
-BioGeoDat <-  read.csv("dataInput/Site_Biogeography_UpdatedSiteNames.csv")
+#LITDat <- read.csv("dataInput/lit_merged_20180412.csv")
+LITDat <- read.csv("dataInput/lit_lizard_meps.csv")
+
+CTDB <- read.csv("dataInput/ctdb_1.1.1.1_NomenclatureUpdate_data.csv") #DOI Here:
+MorphoDat <- read.csv("dataInput/Morphology_WholeAndMedtoHighQualityMeshes_Ready.csv") #DOI here:
+BioGeoDat <-  read.csv("dataInput/Site_Biogeography_UpdatedSiteNames.csv") #Available from GitHub page
 
 
 #Process data ====
@@ -61,6 +63,10 @@ LITDat <- full_join(LITDat, select(TraitGrowthForms,"species","value"), "species
 
 filter(LITDat, is.na(value)) %>% .$species %>% unique(.) %>%  sort(.)
 
+#Update species names
+
+LITDat[which(LITDat$Species == "Montastrea curta")] <- "Montastraea curta"
+
 #Manually add growth form where appropriate
 
 source("2a.DataSetup_ManualUpdateGrowthForms.r")
@@ -81,7 +87,8 @@ GrowthFormBenthicTypes <- LITDat %>% filter(is.na(GrowthForm) == F) %>% select(S
 
 BenthicTypesTable <- bind_rows(OtherBenthicTypes, GrowthFormBenthicTypes)
 
-LITDat$BenthicType <- sapply(1:nrow(LITDat), function(x) BenthicTypesTable$BenthicType[which(BenthicTypesTable$Species %in% LITDat$Species[x])])
+LITDat$BenthicType <- sapply(1:nrow(LITDat), function(x) BenthicTypesTable$BenthicType[which(BenthicTypesTable$Species %in% LITDat$Species[x])]) #%>% unlist()
+
 
 sum(is.na(LITDat$GrowthForm))/nrow(LITDat) #proportion of data with no growth form
 

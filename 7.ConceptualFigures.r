@@ -289,6 +289,6 @@ SampleVvolDens <- SampleVvolDens + labs(x = "2nd moment of volume", colour = "Gr
 
 MultiPan <- grid.arrange(SampleConDens, SampleFDDens, SampleVvolDens, ncol = 1)
 
-ggsave(MultiPan, file = "7.ConceptualFigures/ThreeVars_Dists_Sampled.png", width = 6, height = 9, scale = 1)
-ggsave(MultiPan, file = "7.ConceptualFigures/ThreeVars_Dists_Sampled.pdf", width = 6, height = 9, scale = 1)
+# ggsave(MultiPan, file = "7.ConceptualFigures/ThreeVars_Dists_Sampled.png", width = 6, height = 9, scale = 1)
+# ggsave(MultiPan, file = "7.ConceptualFigures/ThreeVars_Dists_Sampled.pdf", width = 6, height = 9, scale = 1)
 

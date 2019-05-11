@@ -34,7 +34,7 @@ LITDat$value[which(LITDat$species %in% c(
   "Dipsastraea mathaii",
   "Dipsastraea matthai",
   "Dipsastraea rotundata",
-  "Symphillia radians",
+  "Symphyllia radians",
   "Coscinarea columna"
 ))] <- "Massive"
 
