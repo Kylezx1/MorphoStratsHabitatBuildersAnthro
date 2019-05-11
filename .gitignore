@@ -45,3 +45,9 @@ write up
 Test.r
 ConcavityWA_Data_ForLuisa.csv
 ConcavityWA_RModels_ForLuisa.rds
+results/
+write up/
+*.pdf
+*.txt
+*.png
+*.svg
