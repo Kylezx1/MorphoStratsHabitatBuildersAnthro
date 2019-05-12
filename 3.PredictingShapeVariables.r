@@ -233,7 +233,7 @@ lapply(1:length(ShapeVars), function(x)
 MorphoDat$ShapeWeightedAverages <- lapply(1:nrow(MorphoDat), function(x) {
   MorphoDat$LITData_PlusShapeVars[[x]] %>%
     group_by(campaign,site) %>%
-    summarise(ShapeWeightedAverageSum = sum(get(paste0(ShapeVars[x],"_Weighted")))) %>%
+    dplyr::summarise(ShapeWeightedAverageSum = sum(get(paste0(ShapeVars[x],"_Weighted")))) %>%
     mutate(ShapeWeightedAverageSum_OrigScale = if(MorphoDat$Transform[x] == "logit") { invLogit(ShapeWeightedAverageSum) } else { 10^(ShapeWeightedAverageSum) } )
 })
 

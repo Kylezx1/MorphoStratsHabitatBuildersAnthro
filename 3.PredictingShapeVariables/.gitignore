@@ -2,3 +2,4 @@ OldVersions
 ModelCoefficients.csv
 ModelObject.rds
 PredictiveModels_LITShapeData.rds
+ModelStats.csv

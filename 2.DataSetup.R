@@ -15,10 +15,10 @@ source("Functions.r")
 #.....Data ====
 
 #LITDat <- read.csv("dataInput/lit_merged_20180412.csv")
-LITDat <- read.csv("dataInput/lit_lizard_meps.csv")
+LITDat <- read.csv("dataInput/LITData_LizardIsland_1995_2017_190511.csv") #DOI Here:
 
 CTDB <- read.csv("dataInput/ctdb_1.1.1.1_NomenclatureUpdate_data.csv") #DOI Here:
-MorphoDat <- read.csv("dataInput/Morphology_WholeAndMedtoHighQualityMeshes_Ready.csv") #DOI here:
+MorphoDat <- read.csv("dataInput/3DLaserScannedColonies_Whole_MedtoHighQualityMeshes_Zawada_190511.csv") #DOI here:
 BioGeoDat <-  read.csv("dataInput/Site_Biogeography_UpdatedSiteNames.csv") #Available from GitHub page
 
 
@@ -77,7 +77,7 @@ LITDat <- mutate(LITDat, PlanarArea = (pi * (intercept_cm/2)^2)*100)
 
 #rename LIT variables to match morphology data
 
-LITDat <- rename(LITDat, Species = species, GrowthForm = value)
+LITDat <- dplyr::rename(LITDat, Species = species, GrowthForm = value)
 
 #Add benthic type data
 
@@ -105,11 +105,11 @@ TransectCheck2 <- LITDat %>%
 #calculate cover by site and year
 
 LITDat <- LITDat %>%
-  group_by(site, campaign) %>%
-  mutate(ntrans = length(unique(transect))) %>%
-  mutate(ntransadded = ifelse(ntrans >= 6, ntrans, 6)) %>%
-  filter(BenthicType == "HardCoral") %>%
-  mutate(length = sum(intercept_cm),
+  dplyr::group_by(site, campaign) %>%
+  dplyr::mutate(ntrans = length(unique(transect))) %>%
+  dplyr::mutate(ntransadded = ifelse(ntrans >= 6, ntrans, 6)) %>%
+  dplyr::filter(BenthicType == "HardCoral") %>%
+  dplyr::mutate(length = sum(intercept_cm),
          cover = length/(ntransadded*1000))
 
 #Export full lit data

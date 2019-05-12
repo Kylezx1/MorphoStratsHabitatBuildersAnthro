@@ -16,11 +16,14 @@ library(viridis)
 
 source("Functions.r")
 
+Data = MorphoDatNested$data[[1]]
+Var = MorphoDatNested$Trait[[1]]
+
 summariseData <- function(Data, Var) {
   SummDat <- Data %>%
-    select(GrowthForm, Value) %>%
+    dplyr::select(GrowthForm, Value) %>%
     group_by(GrowthForm) %>%
-    summarise(Mean = mean(Value),
+    dplyr::summarise(Mean = mean(Value),
               Median = median(Value),
               SD = sd(Value))
   names(SummDat)[2:4] <- paste0(names(SummDat)[2:4],"_",Var)
@@ -80,7 +83,7 @@ densPlotResampled <- function(Data, Var) {
 
 #.....Data ====
 
-MorphoDat <- read.csv("2.DataSetup/MorphologyData_HighQualityWhole5GFs.csv")
+MorphoDat <- read_csv("2.DataSetup/MorphologyData_HighQualityWhole5GFs.csv")
 Vars <- c("Sphericity", "Convexity", "FractalDimension", "Packing",
           "ColonyVol2ndMomentVertScaled", "ColonySA2ndMomentVertScaled")
 
@@ -91,8 +94,8 @@ MorphoDat <- MorphoDat%>%
 #Shape variable distribution ====
 
 MorphoDatNested <- MorphoDat %>%
-  select(GrowthForm, Vars) %>%
-  rename(SecondMomentVolume = ColonyVol2ndMomentVertScaled, SecondMomentArea = ColonySA2ndMomentVertScaled) %>%
+  dplyr::select(GrowthForm, Vars) %>%
+  dplyr::rename(SecondMomentVolume = ColonyVol2ndMomentVertScaled, SecondMomentArea = ColonySA2ndMomentVertScaled) %>%
   gather(key = "Trait", value = "Value", -GrowthForm) %>%
   group_by(Trait) %>%
   nest(GrowthForm, Value)
@@ -108,22 +111,22 @@ MorphoDatNested$DensPlotObs <- map2(MorphoDatNested$data, MorphoDatNested$Trait,
 MorphoDatNested$DensPlotResampled <- map2(MorphoDatNested$DataResampled, MorphoDatNested$Trait, densPlotResampled)
 
 MorphoDatSummary <- MorphoDatNested %>%
-  select(DataSummary) %>%
+  dplyr::select(DataSummary) %>%
   do.call(rbind, .) %>%
   do.call(cbind, .) %>%
   .[,!duplicated(colnames(.), fromLast = T)] %>%
-  select(GrowthForm, everything())
+  dplyr::select(GrowthForm, everything())
 
 #write.csv(MorphoDatSummary, file = "MorphologyByGrowthForm_ForDama.csv", row.names = F)
 
 #.....Convexity ====
 
 ConDat <- MorphoDat %>%
-  select(GrowthForm, Convexity)
+  dplyr::select(GrowthForm, Convexity)
 
 ConDatMean <- ConDat %>%
   group_by(GrowthForm) %>%
-  summarise(ConvexityMean = mean(Convexity),
+  dplyr::summarise(ConvexityMean = mean(Convexity),
             ConvexityMedian = median(Convexity),
             ConvexitySD = sd(Convexity))
 
@@ -163,12 +166,12 @@ SampleConDens <- ggplot(data = ConDat2, aes(x = Convexity, colour = GrowthForm))
 #.....FracDim ====
 
 FDDat <- MorphoDat %>%
-  select(GrowthForm, FractalDimension) %>%
+  dplyr::select(GrowthForm, FractalDimension) %>%
   mutate(FractalDimension = FractalDimension + 2)
 
 FDDatMean <- FDDat %>%
   group_by(GrowthForm) %>%
-  summarise(FractalDimensionMean = mean(FractalDimension),
+  dplyr::summarise(FractalDimensionMean = mean(FractalDimension),
             FractalDimensionMedian = median(FractalDimension),
             FractalDimensionSD = sd(FractalDimension))
 
@@ -200,53 +203,14 @@ SampleFDDens <- ggplot(data = FDDat2, aes(x = FractalDimension, colour = GrowthF
 # ggsave(SampleFDDens, file = "7.ConceptualFigures/FractalDimensionDist_GrowthForm_Sampled.png", width = 6, height = 3, scale = 1)
 # ggsave(SampleFDDens, file = "7.ConceptualFigures/FractalDimensionDist_GrowthForm_Sampled.pdf", width = 6, height = 3, scale = 1)
 
-#.....Vvol ====
-
-VvolDat <- MorphoDat %>%
-  select(GrowthForm, ColonyVol2ndMomentVertScaled)
-
-VvolDatMean <- VvolDat %>%
-  group_by(GrowthForm) %>%
-  summarise(ColonyVol2ndMomentVertScaledMean = mean(ColonyVol2ndMomentVertScaled),
-            ColonyVol2ndMomentVertScaledMedian = median(ColonyVol2ndMomentVertScaled),
-            ColonyVol2ndMomentVertScaledSD = sd(ColonyVol2ndMomentVertScaled))
-
-VvolDat2 <- lapply(1:nrow(VvolDatMean), function(x) {
-  data.frame(GrowthForm = VvolDatMean$GrowthForm[x],
-             ColonyVol2ndMomentVertScaled = rnorm(1000000, VvolDatMean$ColonyVol2ndMomentVertScaledMean[x], VvolDatMean$ColonyVol2ndMomentVertScaledSD[x]))
-}) %>%
-  bind_rows()
-
-VvolDat$GrowthForm <- factor(VvolDat$GrowthForm , levels = VvolDatMean$GrowthForm[c(order(VvolDatMean$ColonyVol2ndMomentVertScaledMean))])
-VvolDat2$GrowthForm <- factor(VvolDat2$GrowthForm , levels = VvolDatMean$GrowthForm[c(order(VvolDatMean$ColonyVol2ndMomentVertScaledMean))])
-
-#VvolDat2 <- sapply(   ColonyVol2ndMomentVertScaled = map2(ColonyVol2ndMomentVertScaledMean, ColonyVol2ndMomentVertScaledSD, rnorm, n = 100))
-
-ggplot(data = VvolDat, aes(x = ColonyVol2ndMomentVertScaled, colour = GrowthForm)) +
-  geom_line(stat = "density", size = 2, alpha = 0.7) +
-  scale_color_viridis(discrete = T) +
-  theme_classic2() +
-  theme(panel.background = element_rect(colour = "black")) #+
-  #coord_cartesian(xlim = c(0,1))
-
-SampleVvolDens <- ggplot(data = VvolDat2, aes(x = ColonyVol2ndMomentVertScaled, colour = GrowthForm)) +
-  geom_line(stat = "density", size = 2, alpha = 0.7) +
-  scale_color_viridis(discrete = T) +
-  theme_classic2() +
-  theme(panel.background = element_rect(colour = "black")) +
-  coord_cartesian(xlim = c(0,1), ylim = c(0,7.5), expand = F)
-
-# ggsave(SampleVvolDens, file = "7.ConceptualFigures/ColonyVol2ndMomentVertScaledDist_GrowthForm_Sampled.png", width = 6, height = 3, scale = 1)
-# ggsave(SampleVvolDens, file = "7.ConceptualFigures/ColonyVol2ndMomentVertScaledDist_GrowthForm_Sampled.pdf", width = 6, height = 3, scale = 1)
-
 #.....Vsa ====
 
 VsaDat <- MorphoDat %>%
-  select(GrowthForm, ColonyVol2ndMomentVertScaled)
+  dplyr::select(GrowthForm, ColonyVol2ndMomentVertScaled)
 
 VsaDatMean <- VsaDat %>%
   group_by(GrowthForm) %>%
-  summarise(ColonyVol2ndMomentVertScaledMean = mean(ColonyVol2ndMomentVertScaled),
+  dplyr::summarise(ColonyVol2ndMomentVertScaledMean = mean(ColonyVol2ndMomentVertScaled),
             ColonyVol2ndMomentVertScaledSD = sd(ColonyVol2ndMomentVertScaled))
 
 VsaDat2 <- lapply(1:nrow(VsaDatMean), function(x) {
@@ -276,19 +240,4 @@ SampleVsaDens <- ggplot(data = VsaDat2, aes(x = ColonyVol2ndMomentVertScaled, co
 
 # ggsave(SampleVsaDens, file = "7.ConceptualFigures/ColonyVol2ndMomentVertScaledDist_GrowthForm_Sampled.png", width = 6, height = 3, scale = 1)
 # ggsave(SampleVsaDens, file = "7.ConceptualFigures/ColonyVol2ndMomentVertScaledDist_GrowthForm_Sampled.pdf", width = 6, height = 3, scale = 1)
-
-
-#.....Added time multi panel! ====
-
-library(gridExtra)
-
-SampleConDens <- SampleConDens + labs(colour = "Growth form")
-SampleFDDens <- SampleFDDens + labs(x = "Fractal dimension", colour = "Growth form")
-SampleVvolDens <- SampleVvolDens + labs(x = "2nd moment of volume", colour = "Growth form")
-
-
-MultiPan <- grid.arrange(SampleConDens, SampleFDDens, SampleVvolDens, ncol = 1)
-
-# ggsave(MultiPan, file = "7.ConceptualFigures/ThreeVars_Dists_Sampled.png", width = 6, height = 9, scale = 1)
-# ggsave(MultiPan, file = "7.ConceptualFigures/ThreeVars_Dists_Sampled.pdf", width = 6, height = 9, scale = 1)
 

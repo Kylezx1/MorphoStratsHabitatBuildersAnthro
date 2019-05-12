@@ -6,7 +6,7 @@ rm(list = ls())
 
 #.....Libraries ====
 
-library(plyr)
+#library(plyr)
 library(tidyverse)
 library(viridis)
 library(ggpubr)

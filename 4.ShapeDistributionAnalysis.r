@@ -25,7 +25,7 @@ source("Functions.r")
 #.....Data ====
 
 LITDat <- readRDS("3.PredictingShapeVariables/PredictiveModels_LITShapeData.rds")
-BioGeoDat <-  read.csv("2.DataSetup/BioGeoDat_PlusLIBearing.csv")
+BioGeoDat <-  read_csv("2.DataSetup/BioGeoDat_PlusLIBearing.csv")
 
 #Set up data ====
 
@@ -39,7 +39,7 @@ LITDat$LITData_PlusShapeVars[[1]]$campaign <- factor(LITDat$LITData_PlusShapeVar
 
 BioGeoDat <- BioGeoDat %>%
   filter(site != "North 2" & site !=  "North 3") %>%
-  droplevels
+  droplevels()
 
 #.....remove corner beach ====
 
@@ -110,26 +110,26 @@ LITDat$ShapeWeightedAveragesScaled <- lapply(1:nrow(LITDat), function(x) {
 #...............create colony count dataframe ====
 
 ColonyCounts <- LITDat$LITData_PlusShapeVars[[1]] %>%
-  select(site, campaign) %>%
+  dplyr::select(site, campaign) %>%
   table() %>%
   as.data.frame() %>%
-  rename(Counts = Freq)
+  dplyr::rename(Counts = Freq)
 
 TransectCounts <- LITDat$LITData_PlusShapeVars[[1]] %>%
-  group_by(site, campaign) %>%
-  summarise(NTransects = length(unique(transect)))
+  dplyr::group_by(site, campaign) %>%
+  dplyr::summarise(NTransects = length(unique(transect)))
 TransectCounts$NTransectsAdded <- ifelse(TransectCounts$NTransects >= 6, TransectCounts$NTransects, 6)
 
 ColonyCountsDF <- left_join(TransectCounts, ColonyCounts, by = c("site", "campaign")) %>%
-  mutate(ShapeVariable = "MeanColoniesPerTransect_Scaled")
+  dplyr::mutate(ShapeVariable = "MeanColoniesPerTransect_Scaled")
 ColonyCountsDF$Value <- ColonyCountsDF$Counts/ColonyCountsDF$NTransectsAdded
 ColonyCountsDF$Value <- rescale(ColonyCountsDF$Value)
-ColonyCountsDF <- ColonyCountsDF %>% select(site, campaign, ShapeVariable, Value)
+ColonyCountsDF <- ColonyCountsDF %>% dplyr::select(site, campaign, ShapeVariable, Value)
 
 CoverDF <- LITDat$LITData_PlusShapeVars[[1]] %>%
-  select(site, campaign, cover) %>%
-  mutate(ShapeVariable = "Cover") %>%
-  rename(Value = cover) %>%
+  dplyr::select(site, campaign, cover) %>%
+  dplyr::mutate(ShapeVariable = "Cover") %>%
+  dplyr::rename(Value = cover) %>%
   unique()
 CoverDF$Value <- rescale(CoverDF$Value)
 
@@ -137,20 +137,20 @@ CoverDF$Value <- rescale(CoverDF$Value)
 #...............Plotting dataframe
 
 MultiVarYearPlotDat <- multiJoin(LITDat$ShapeWeightedAveragesScaled) %>%
-  select(site, campaign, ColonyVol_Scaled_OrigScale, Convexity_Scaled_OrigScale, FractalDimension_Scaled_OrigScale, ColonySA2ndMomentVertScaled_Scaled_OrigScale) %>%
+  dplyr::select(site, campaign, ColonyVol_Scaled_OrigScale, Convexity_Scaled_OrigScale, FractalDimension_Scaled_OrigScale, ColonySA2ndMomentVertScaled_Scaled_OrigScale) %>%
   #mutate(Convexity_Scaled_OrigScale = 1-Convexity_Scaled_OrigScale) %>%
   gather(ColonyVol_Scaled_OrigScale, Convexity_Scaled_OrigScale, FractalDimension_Scaled_OrigScale, ColonySA2ndMomentVertScaled_Scaled_OrigScale, key = "ShapeVariable", value = "Value") %>%
-  mutate(campaign = factor(campaign)) %>%
+  dplyr::mutate(campaign = factor(campaign)) %>%
   bind_rows(CoverDF) %>%
-  filter(site %in% c("North 3") == F) %>%
-  filter(ShapeVariable != "ColonyVol_Scaled_OrigScale")
+  dplyr::filter(site %in% c("North 3") == F) %>%
+  dplyr::filter(ShapeVariable != "ColonyVol_Scaled_OrigScale")
 
 #...............List column approach ====
 
 DeltaShapeBySite <- MultiVarYearPlotDat %>%
-  group_by(site) %>%
-  full_join(.,expand(., campaign)) %>% #fill in missing year data levels to keep x axes consistent between plots
-  mutate(campaignInteger = as.integer(as.character(campaign))) %>% #create integer version of campaign
+  dplyr::group_by(site) %>%
+  dplyr::full_join(.,expand(., campaign)) %>% #fill in missing year data levels to keep x axes consistent between plots
+  dplyr::mutate(campaignInteger = as.integer(as.character(campaign))) %>% #create integer version of campaign
   nest() #nest to list columns
 
 #..........Plotting ====
@@ -214,7 +214,7 @@ deltaShapeByYearPlot <- function(Site, Data, Points = T) {
 }
 
 DeltaShapeBySite <- DeltaShapeBySite %>%
-  mutate(Plots = map2(DeltaShapeBySite$site, DeltaShapeBySite$data, deltaShapeByYearPlot, F))
+  dplyr::mutate(Plots = map2(DeltaShapeBySite$site, DeltaShapeBySite$data, deltaShapeByYearPlot, F))
 
 names(DeltaShapeBySite$Plots) <- DeltaShapeBySite$site
 
@@ -229,7 +229,7 @@ BlankPlot <- BlankPlot +
   #scale_fill_manual(values = VariablePalette, labels = c("Volume", "Fractal Dimension", "Colonies", "SA:Vol", "Sphericity")) +
   #scale_fill_manual(values = VariablePalette, labels = c("Size", "Surface complexity", "Colonies", "SA:Vol", "Volume compactness")) +
   #scale_fill_manual(values = VariablePalette, labels = c("Top heaviness", "Colony Size", "Coral cover", "Volume compactness", "Surface complexity")) +
-  scale_fill_viridis(discrete = T, labels = c("Top heaviness",  "Volume compactness", "Coral cover", "Surface complexity")) +
+  #scale_fill_viridis(discrete = T, labels = c("Top heaviness",  "Volume compactness", "Coral cover", "Surface complexity")) +
   scale_y_continuous(breaks = c(0, 0.5, 1)) +
   labs(x = "Year",
        y = "Scaled \nvariable value",
@@ -257,7 +257,7 @@ DeltaShapeBySite$Plots$`North Reef`
 #Grob
 
 DeltaShapeBySite <- DeltaShapeBySite %>%
-  mutate(Grobs = map(DeltaShapeBySite$Plots, ggplotGrob))
+  dplyr::mutate(Grobs = map(DeltaShapeBySite$Plots, ggplotGrob))
 
 
 #...............create left, top and right hand side plot grobs ====
@@ -291,7 +291,7 @@ LizardMap <- ggplotGrob(LizardMap)
 
 #..........Big map plot with panels ====
 
-BigMap <-  grid.arrange(arrangeGrob(DeltaShapeBySite$Grobs$`Turtle Beach`,
+BigMap <- grid.arrange(arrangeGrob(DeltaShapeBySite$Grobs$`Turtle Beach`,
                                     DeltaShapeBySite$Grobs$`Cooks Path`, #left column
                                     DeltaShapeBySite$Grobs$Resort,
                                     ggplotGrob(BlankPlot), #rectGrob(gp = gpar(col = "white", fill = "white")),
