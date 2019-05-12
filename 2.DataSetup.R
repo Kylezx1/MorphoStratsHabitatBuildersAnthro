@@ -14,12 +14,26 @@ source("Functions.r")
 
 #.....Data ====
 
-#LITDat <- read.csv("dataInput/lit_merged_20180412.csv")
-LITDat <- read.csv("dataInput/LITData_LizardIsland_1995_2017_190511.csv") #DOI Here:
+#..........LIT Data  ====
 
-CTDB <- read.csv("dataInput/ctdb_1.1.1.1_NomenclatureUpdate_data.csv") #DOI Here:
-MorphoDat <- read.csv("dataInput/3DLaserScannedColonies_Whole_MedtoHighQualityMeshes_Zawada_190511.csv") #DOI here:
-BioGeoDat <-  read.csv("dataInput/Site_Biogeography_UpdatedSiteNames.csv") #Available from GitHub page
+#DOI Here: 10.6084/m9.figshare.8115677
+#Download data to dataInput and point to it here:
+LITDat <- read.csv("dataInput/LITData_LizardIsland_1995_2017_190511.csv")
+
+#.........Coral traits data
+
+#DOI Here: 10.6084/m9.figshare.2067414.v1
+#Download data to dataInput and point to it here:
+CTDB <- read.csv("dataInput/ctdb_1.1.1.1_NomenclatureUpdate_data.csv")
+
+#.........Morphology data
+#DOI here: 10.6084/m9.figshare.8115674
+#Under embargoe until 12/05/2020 whilst other publications are under preparation
+MorphoDat <- read.csv("dataInput/3DLaserScannedColonies_Whole_MedtoHighQualityMeshes_Zawada_190511.csv")
+
+#.........Site location data
+#Available from GitHub page
+BioGeoDat <-  read.csv("dataInput/Site_Biogeography_UpdatedSiteNames.csv")
 
 
 #Process data ====
@@ -73,7 +87,7 @@ source("2a.DataSetup_ManualUpdateGrowthForms.r")
 
 #Create planar area from intercept, assuming intercept = diameter, multiply by 100 for planar area in mm
 
-LITDat <- mutate(LITDat, PlanarArea = (pi * (intercept_cm/2)^2)*100)
+LITDat <- mutate(LITDat, PlanarArea_cm2 = (pi * (intercept_cm/2)^2)*100)
 
 #rename LIT variables to match morphology data
 
