@@ -123,6 +123,9 @@ MorphoDat$Plots <- modelPlots
 MorphoDat <- MorphoDat %>%
   mutate(PredR2 = map(.$Model, pred_r_squared))
 
+#.......... Units ====
+MorphoDat$Units <- c("mm3", "mm2", "none", "none", "none", "none", "mm-1", "mm4",  "mm3")
+
 
 #.....Export model objects ====
 
