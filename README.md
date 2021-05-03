@@ -2,6 +2,7 @@
 Project file for paper: Morphological Traits can track Coral Reef Responses to the Anthropocene
 
 Paper here: https://besjournals.onlinelibrary.wiley.com/doi/10.1111/1365-2435.13358
+
 Plain language overview of paper here: https://besjournals.onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2F1365-2435.13358&file=fec13358-sup-0001-Summary.pdf
 
 # To run scripts the following data needs to be downloaded
